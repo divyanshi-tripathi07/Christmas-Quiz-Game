@@ -249,7 +249,7 @@
       <div class="card-head">
         <p class="eyebrow">Holiday challenge</p>
         <h1>How well do you know Christmas?</h1>
-        <p>Eight cheerful questions. Choose an answer, learn something new, and see how high you can score.</p>
+        <p>Every round brings a fresh mix of Christmas questions, from old traditions and history to the way we celebrate today.</p>
       </div>
 
       <div class="quiz-panel" id="quiz-panel">
@@ -270,7 +270,7 @@
       <div class="quiz-panel results" id="results-panel" aria-live="polite">
         <p class="eyebrow">Round complete</p>
         <h2>Your Christmas score</h2>
-        <div class="result-score"><span id="final-score">0</span><small>/ 8</small></div>
+        <div class="result-score"><span id="final-score">0</span><small id="final-total">/ 8</small></div>
         <p class="result-message" id="result-message"></p>
         <button class="button primary" id="play-again-button" type="button">Play again</button>
       </div>
@@ -279,15 +279,32 @@
   </main>
 
   <script>
+    const ROUND_SIZE = 8;
     const questions = [
       { prompt: "Which day is Christmas Day?", choices: ["December 24", "December 25", "December 26", "January 1"], answer: "December 25", explanation: "Christmas Day is celebrated on December 25." },
-      { prompt: "What is the name of Santa's reindeer with a glowing red nose?", choices: ["Comet", "Dasher", "Rudolph", "Vixen"], answer: "Rudolph", explanation: "Rudolph is famous for his bright red nose." },
+      { prompt: "What is the name of Santa's reindeer with a glowing red nose?", choices: ["Comet", "Dasher", "Rudolph", "Vixen"], answer: "Rudolph", explanation: "Rudolph was created for a 1939 story and became part of modern Christmas culture." },
       { prompt: "In the song, what did the little drummer boy play?", choices: ["A flute", "A drum", "A bell", "A violin"], answer: "A drum", explanation: "The song is called The Little Drummer Boy." },
       { prompt: "Which plant is traditionally hung for a Christmas kiss?", choices: ["Holly", "Ivy", "Mistletoe", "Rosemary"], answer: "Mistletoe", explanation: "Mistletoe is the traditional kissing plant." },
-      { prompt: "What is traditionally placed on top of a Christmas tree?", choices: ["A star or angel", "A snowman", "A bell pepper", "A stocking"], answer: "A star or angel", explanation: "A star or angel is commonly used as the tree topper." },
+      { prompt: "What is traditionally placed on top of a Christmas tree?", choices: ["A star or angel", "A snowman", "A bell pepper", "A stocking"], answer: "A star or angel", explanation: "The star can represent the Star of Bethlehem, while an angel recalls the Christmas story." },
       { prompt: "Which warm drink is often served at Christmas?", choices: ["Lemonade", "Hot chocolate", "Iced tea", "Milkshake"], answer: "Hot chocolate", explanation: "Hot chocolate is a popular warm Christmas drink." },
       { prompt: "What color is Santa's suit most commonly shown as?", choices: ["Green", "Blue", "Red", "Purple"], answer: "Red", explanation: "Modern Christmas illustrations most commonly show Santa in red." },
-      { prompt: "What do people commonly exchange at Christmas?", choices: ["Gifts", "Umbrellas", "Schoolbooks", "Maps"], answer: "Gifts", explanation: "Exchanging gifts is a familiar Christmas tradition." }
+      { prompt: "What do people commonly exchange at Christmas?", choices: ["Gifts", "Umbrellas", "Schoolbooks", "Maps"], answer: "Gifts", explanation: "Exchanging gifts is a familiar Christmas tradition." },
+      { prompt: "Which ancient Roman festival is often discussed when explaining the history of winter celebrations?", choices: ["Saturnalia", "Lupercalia", "Floralia", "Vinalia"], answer: "Saturnalia", explanation: "Saturnalia was a Roman winter festival known for feasting and gift giving." },
+      { prompt: "Who wrote A Christmas Carol?", choices: ["Jane Austen", "Charles Dickens", "Mark Twain", "Oscar Wilde"], answer: "Charles Dickens", explanation: "Charles Dickens published A Christmas Carol in 1843." },
+      { prompt: "What is the name of the traditional Christmas ballet with the Sugar Plum Fairy?", choices: ["Swan Lake", "The Nutcracker", "Giselle", "Coppelia"], answer: "The Nutcracker", explanation: "Tchaikovsky's The Nutcracker is a classic Christmas-season ballet." },
+      { prompt: "Which country is widely associated with popularizing the Christmas tree tradition?", choices: ["Germany", "Brazil", "Egypt", "Australia"], answer: "Germany", explanation: "The modern Christmas tree tradition became especially popular in German-speaking regions." },
+      { prompt: "What does the word Noel commonly mean in Christmas songs?", choices: ["Winter", "Christmas", "Star", "Candle"], answer: "Christmas", explanation: "Noel comes from a word associated with Christmas and the Christmas season." },
+      { prompt: "Which Christmas song begins with the words 'You better watch out'?", choices: ["Jingle Bells", "Santa Claus Is Coming to Town", "Silent Night", "O Holy Night"], answer: "Santa Claus Is Coming to Town", explanation: "The song playfully warns children that Santa is on his way." },
+      { prompt: "What is panettone?", choices: ["A festive Italian sweet bread", "A candle holder", "A Christmas dance", "A type of ornament"], answer: "A festive Italian sweet bread", explanation: "Panettone is a tall, airy sweet bread traditionally eaten in Italy at Christmas." },
+      { prompt: "In many countries, what does an Advent calendar count down to?", choices: ["New Year's Day", "Christmas Day", "Valentine's Day", "The first snowfall"], answer: "Christmas Day", explanation: "Advent calendars count the days leading up to Christmas." },
+      { prompt: "What is a yule log traditionally called in French?", choices: ["Buche de Noel", "Pain d'epices", "Galette des rois", "Croquembouche"], answer: "Buche de Noel", explanation: "Buche de Noel is a French Christmas cake shaped like a log." },
+      { prompt: "Which Christmas market tradition is strongly associated with Nuremberg?", choices: ["Christkindlesmarkt", "Mardi Gras", "Oktoberfest", "La Tomatina"], answer: "Christkindlesmarkt", explanation: "Nuremberg's Christkindlesmarkt is one of Germany's best-known Christmas markets." },
+      { prompt: "What does an evergreen tree symbolize in many winter traditions?", choices: ["Life continuing through winter", "The end of summer", "A new school year", "The longest night"], answer: "Life continuing through winter", explanation: "Evergreen plants stay green through winter and are often linked with life and hope." },
+      { prompt: "Which film features the character Kevin McCallister?", choices: ["Elf", "Home Alone", "The Polar Express", "The Holiday"], answer: "Home Alone", explanation: "Kevin is the child who protects his home in Home Alone." },
+      { prompt: "What modern technology has made sending digital Christmas greetings common?", choices: ["Email", "Typewriter ribbon", "Film projector", "Compass"], answer: "Email", explanation: "Email and messaging apps let people send digital Christmas greetings instantly." },
+      { prompt: "Why are LED lights popular for modern Christmas decorations?", choices: ["They use less energy", "They melt snow", "They make trees grow", "They play music automatically"], answer: "They use less energy", explanation: "LED bulbs generally use less energy and last longer than older incandescent bulbs." },
+      { prompt: "What is a common way communities celebrate Christmas today?", choices: ["A charity gift drive", "A tax audit", "A science exam", "A silent classroom"], answer: "A charity gift drive", explanation: "Many communities organize gift, food, or toy drives during the Christmas season." },
+      { prompt: "Which streaming activity is now common during the holiday season?", choices: ["Watching Christmas films", "Listening to weather reports all day", "Reading train schedules", "Viewing cooking timers"], answer: "Watching Christmas films", explanation: "Holiday films and specials are widely watched through streaming services today." }
     ];
 
     const state = { round: [], current: 0, score: 0, answered: false };
@@ -303,6 +320,7 @@
     const quizPanel = document.getElementById("quiz-panel");
     const resultsPanel = document.getElementById("results-panel");
     const finalScoreElement = document.getElementById("final-score");
+    const finalTotalElement = document.getElementById("final-total");
     const resultMessageElement = document.getElementById("result-message");
 
     function shuffled(items) {
@@ -315,7 +333,12 @@
     }
 
     function startGame() {
-      state.round = shuffled(questions).map((question) => ({ ...question, choices: shuffled(question.choices) }));
+      const previousPrompts = new Set(state.round.map((question) => question.prompt));
+      let available = questions.filter((question) => !previousPrompts.has(question.prompt));
+      if (available.length < ROUND_SIZE) available = questions;
+      state.round = shuffled(available)
+        .slice(0, ROUND_SIZE)
+        .map((question) => ({ ...question, choices: shuffled(question.choices) }));
       state.current = 0;
       state.score = 0;
       scoreElement.textContent = "0";
@@ -384,6 +407,7 @@
         : state.score * 2 >= total
           ? "Great job!"
           : "Good try. Play again to improve your score!";
+          finalTotalElement.textContent = `/ ${total}`;
       progressBar.style.width = "100%";
       percentElement.textContent = "100%";
     }
